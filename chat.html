@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="bootstrap/css/docs.css" rel="stylesheet">
+	
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script>
+	        var OAUTHURL    =   'https://accounts.google.com/o/oauth2/auth?';
+	        var VALIDURL    =   'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+	        var SCOPE       =   'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+	        var CLIENTID    =   '1064075274553-qrpk33d8280keo9b59om51o2vhr5mu06.apps.googleusercontent.com';
+	        var REDIRECT    =   'http://10.2.160.139.xip.io/oauth/index.html'
+	        var LOGOUT      =   'http://accounts.google.com/Logout';
+	        var TYPE        =   'token';
+	        var _url        =   OAUTHURL + 'scope=' + SCOPE + '&client_id=' + CLIENTID + '&redirect_uri=' + REDIRECT + '&response_type=' + TYPE;
+	        var acToken;
+	        var tokenType;
+	        var expiresIn;
+	        var user;
+	        var loggedIn    =   false;
+
+    
+	        function login() {
+	            var win         =   window.open(_url, "windowname1", 'width=800, height=600'); 
+
+	            var pollTimer   =   window.setInterval(function() { 
+	                try {
+	                    console.log(win.document.URL);
+	                    if (win.document.URL.indexOf(REDIRECT) != -1) {
+	                        window.clearInterval(pollTimer);
+	                        var url =   win.document.URL;
+	                        acToken =   gup(url, 'access_token');
+	                        tokenType = gup(url, 'token_type');
+	                        expiresIn = gup(url, 'expires_in');
+	                        win.close();
+
+	                        validateToken(acToken);
+	                    }
+	                } catch(e) {
+	                }
+	            }, 500);
+	        }
+
+	        function validateToken(token) {
+	            $.ajax({
+	                url: VALIDURL + token,
+	                data: null,
+	                success: function(responseText){  
+	                    getUserInfo();
+	                    loggedIn = true;
+	                    $('#loginText').hide();
+	                    $('#logoutText').show();
+	                },  
+	                dataType: "jsonp"  
+	            });
+	        }
+
+	        function getUserInfo() {
+	            $.ajax({
+	                url: 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + acToken,
+	                data: null,
+	                success: function(resp) {
+	                    user    =   resp;
+	                    console.log(user);
+	                    $('#uName').text('Welcome ' + user.name);
+	                    $('#imgHolder').attr('src', user.picture);
+						olark('api.chat.updateVisitorNickname', {snippet: user.name})
+						olark('api.box.expand')
+	                },
+	                dataType: "jsonp"
+	            });
+	        }
+
+	        //credits: http://www.netlobo.com/url_query_string_javascript.html
+	        function gup(url, name) {
+	            name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	            var regexS = "[\\#&]"+name+"=([^&#]*)";
+	            var regex = new RegExp( regexS );
+	            var results = regex.exec( url );
+	            if( results == null )
+	                return "";
+	            else
+	                return results[1];
+	        }
+
+	        function startLogoutPolling() {
+	            $('#loginText').show();
+	            $('#logoutText').hide();
+	            loggedIn = false;
+	            $('#uName').text('Welcome ');
+	            $('#imgHolder').attr('src', 'none.jpg');
+	        }
+			
+			// force hidden box, just in case. may not be needed
+			// olark('api.box.hide');
+	    </script>
+	
+</head>
+<body>
+	
+	<div class="jumbotron masthead">
+	  <div class="container">
+	    <h1>Klarna Product Chat</h1>
+	    <p>Hej Customer Care! Immediate on-call support during business hours powered by Klarna Product Managers</p>
+	    <p>
+	      <a href="#" onclick="login();" class="btn btn-primary btn-large" >Chat Now</a>
+	    </p>
+		<!-- 
+		    <iframe name='myIFrame' id="myIFrame" style='display:none'></iframe>
+		    <div id='uName'></div>
+		    <img src='' id='imgHolder'/>
+			-->
+	    <ul class="masthead-links">
+	      <li>
+	        <a href=""></a>
+	      </li>
+	      <li>
+	        <a href=""></a>
+	      </li>
+	      <li>
+	        <a href=""></a>
+	      </li>
+	      <li>
+	      </li>
+	    </ul>
+	  </div>
+	</div>
+	
+
+	
+<!-- begin olark code -->
+<script data-cfasync="false" type='text/javascript'>/*<![CDATA[*/window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){
+f[z]=function(){
+(a.s=a.s||[]).push(arguments)};var a=f[z]._={
+},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){
+f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={
+0:+new Date};a.P=function(u){
+a.p[u]=new Date-a.p[0]};function s(){
+a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){
+hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){
+return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){
+b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{
+b.contentWindow[g].open()}catch(w){
+c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{
+var t=b.contentWindow[g];t.write(p());t.close()}catch(x){
+b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({
+loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+/* custom configuration goes here (www.olark.com/documentation) */
+olark.identify('6472-674-10-3489');/*]] > */</script><noscript><a href="https://www.olark.com/site/6472-674-10-3489/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript>
+<!-- end olark code -->
+
+<!-- BEGIN OLARK CHAT LINK -->
+<a href="javascript:void(0);" onclick="olark('api.box.expand')">
+</a>
+<!-- END OLARK CHAT LINK -->
+
+<!-- inside body tag -->
+
+
+    <a href="#" style="display:none" id="logoutText" target='myIFrame' onclick="myIFrame.location='https://www.google.com/accounts/Logout'; startLogoutPolling();return false;"> Click here to logout </a>
+    <iframe name='myIFrame' id="myIFrame" style='display:none'></iframe>
+</body>
+</html>
