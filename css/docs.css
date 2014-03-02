@@ -4,7 +4,7 @@ body {
 }
 
 body {
-  background: -webkit-linear-gradient(#EFF1F4 0%, #B8C3CE 100%); /* Chrome10+,Safari5.1+ */
+  background: -webkit-linear-gradient(#EFF1F4 0%, #EFF1F4 100%); /* Chrome10+,Safari5.1+ */
   border-top: 3px solid #0089CF;
   /*background: #ECEEF1;*/
   font-family: helvetica neue, helvetica, sans-serif;
